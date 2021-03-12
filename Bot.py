@@ -18,7 +18,7 @@ async def bothelp(ctx):
     color = discord.Color.dark_orange()
     )
 
-    help_embed.set_thumbnail(url="https://o.remove.bg/downloads/5963675a-bbc1-49cf-b325-5ab1d03b3481/png-transparent-question-mark-logo-question-mark-cartoon-text-monochrome-black-removebg-preview.png")
+    help_embed.set_thumbnail(url="https://lh3.googleusercontent.com/proxy/rNrDLUvN5eu_VKOqg2YfS-sO2Edb3IFZAoX2aAKrPRkK_VGVW9H6CVM3Z4T3f0YYbeGop6G-LVhhMgRYBLbJ-d5hppUXjxxqrZcG7tokvMSBz4xpG3jz1Lda5QLVfRX_elC4JEW_N0cOnB6v5nUwhkH-")
     await ctx.send(embed=help_embed)
 @bot.command()
 async def raidcalc(ctx,type,sulfur):
@@ -70,129 +70,85 @@ async def raidcalc(ctx,type,sulfur):
         satchel_menu.set_thumbnail(
             url="https://community.cloudflare.steamstatic.com/economy/image/6TMcQ7eX6E0EZl2byXi7vaVKyDk_zQLX05x6eLCFM9neAckxGDf7qU2e2gu64OnAeQ7835Fc5WLCfDY0jhyo8DEiv5ddOKA9pbAzRP66Mz-oL1M/360fx360f")
         await ctx.send(embed=satchel_menu)
-
+    elif type == 'Expo' or 'expo':
+        calculation_sulfur_expo = int(sulfur) // 25
+        calculation_charcoal_expo = calculation_sulfur_expo * 20
+        calculation_fragments_expo = calculation_sulfur_expo * 5
+        expo_menu = discord.Embed(
+            title="Craftables",
+            description="Amount: " + str(calculation_sulfur_expo) + "\n" + "\nMaterials: " + "\nCharcoal: " + str(
+                calculation_charcoal_expo) + "\nFragments: " + str(calculation_fragments_expo),
+            color=discord.Color.dark_orange()
+        )
+        expo_menu.set_thumbnail(
+            url="https://static.wikia.nocookie.net/play-rust/images/3/31/Explosive_5.56_Rifle_Ammo_icon.png/revision/latest/scale-to-width-down/256?cb=20151106061449")
+        await ctx.send(embed=expo_menu)
 
 import json
 @bot.command()
-async def serverstatus(ctx, server):
+async def serverstatus(ctx, id : str):
     """
     Takes a string value (Paranoid or UKN) and will then display a embed menu with the servers information in the discord chat the command was called in.
     """
-    if server == 'Paranoid':
-        response = requests.get('https://api.battlemetrics.com/servers/8846084')
-        print(response.status_code)
-        json_data_paranoid = response.json()
-        print(json_data_paranoid)
-        name = str(json_data_paranoid["data"]["attributes"]["name"])
-        server_status = str(json_data_paranoid["data"]["attributes"]["status"])
-        player_count = str(json_data_paranoid["data"]["attributes"]["players"])
-        players_queued = str(json_data_paranoid["data"]["attributes"]["details"]["rust_queued_players"])
+    response = requests.get('https://api.battlemetrics.com/servers' + "/" + id)
+    print(response.status_code)
+    json_data= response.json()
+    print(json)
+    name = str(json_data["data"]["attributes"]["name"])
+    status = str(json_data["data"]["attributes"]["status"])
+    players = str(json_data["data"]["attributes"]["players"])
+    player_queue = str(json_data["data"]["attributes"]["details"]["rust_queued_players"])
+    seed = str(json_data["data"]["attributes"]["details"]["rust_maps"]["url"])
 
-        menu = discord.Embed(
-         title=name,
-         description="\nServer: Status " + server_status + "\nPlayers: " + player_count + "/250" + "\nQueue: " + players_queued,
-         color=discord.Color.dark_orange()
-        )
-
-        menu.set_thumbnail(url="https://paranoid.gg/img/favicon.png")
-        await ctx.send(embed=menu)
-    elif server == 'UKN':
-        response = requests.get('https://api.battlemetrics.com/servers/6792417')
-        json_data_ukn = response.json()
-        print(json_data_ukn)
-        name = str(json_data_ukn["data"]["attributes"]["name"])
-        server_status = str(json_data_ukn["data"]["attributes"]["status"])
-        player_count = str(json_data_ukn["data"]["attributes"]["players"])
-        players_queued = str(json_data_ukn["data"]["attributes"]["details"]["rust_queued_players"])
-
-        men = discord.Embed(
-         title=name,
-         description="\nServer: Status " + server_status + "\nPlayers: " + player_count + "/425" + "\nQueue: " + players_queued,
-         color=discord.Color.dark_orange()
-        )
-
-        men.set_thumbnail(url="https://ukn.gg/img/logo.png")
-        await ctx.send(embed=men)
-    elif server == 'Rusty2x':
-        response = requests.get('https://api.battlemetrics.com/servers/433778')
-        json_data_rusty2x = response.json()
-        print(json_data_rusty2x)
-        name = str(json_data_rusty2x["data"]["attributes"]["name"])
-        server_status = str(json_data_rusty2x["data"]["attributes"]["status"])
-        player_count = str(json_data_rusty2x["data"]["attributes"]["players"])
-        players_queued = str(json_data_rusty2x["data"]["attributes"]["details"]["rust_queued_players"])
-
-        men = discord.Embed(
-         title=name,
-         description="\nServer: Status " + server_status + "\nPlayers: " + player_count + "/200" + "\nQueue: " + players_queued,
-         color=discord.Color.dark_orange()
-        )
-
-        men.set_thumbnail(url="https://i.redd.it/4r2d03zzicm31.png")
-        await ctx.send(embed=men)
-
+    serverstatus_menu = discord.Embed(
+        title=name,
+        description="Server Status: " + status + "\nPlayers Online: " + players + "/250" + "\nQueue Length: " + player_queue +
+        "\nMap Seed: " + seed,
+        color=discord.Color.dark_orange()
+    )
+    await ctx.send(embed=serverstatus_menu)
 
 @bot.command()
 async def raidchart(ctx, type):
-    if type == 'C4':
+    if type == 'C4' or type == "c4":
         c4_chart = discord.Embed(
             title="C4 Chart",
-            description="\nWood Wall: 1" + "\nStone Wall: 2" + "\nSheet Wall: 4" + "\n Armoured Wall: 8" + "\nWood Door: 1" + "\nSheet Door: 1" + "\nGarage Door: 2" + "\nArmoured Door: 2" + "\nLadder Hatch: 1" +
+            description="\nWood Wall: 1" + "\nStone Wall: 2" + "\nSheet Wall: 4" + "\nArmoured Wall: 8" + "\nWood Door: 1" + "\nSheet Door: 1" + "\nGarage Door: 2" + "\nArmoured Door: 2" + "\nLadder Hatch: 1" +
             "\nWood High Ex: 2" + "\nStone High Ex: 2",
             color=discord.Color.dark_orange()
         )
 
         c4_chart.set_thumbnail(url="https://static.wikia.nocookie.net/play-rust/images/6/6c/Timed_Explosive_Charge_icon.png/revision/latest?cb=20151106061610")
         await ctx.send(embed=c4_chart)
-    elif type == 'Rocket':
+    elif type == 'Rocket' or type == "Rockets" or type == "rocket" or type == "rockets":
         rocket_chart = discord.Embed(
             title="Rocket Chart",
-            description="\nWood Wall: 2" + "\nStone Wall: 4" + "\nSheet Wall: 8" + "\n Armoured Wall: 15" + "\nWood Door: 1" + "\nSheet Door: 2" + "\nGarage Door: 3" + "\nArmoured Door: 4" + "\nLadder Hatch: 2" +
+            description="\nWood Wall: 2" + "\nStone Wall: 4" + "\nSheet Wall: 8" + "\nArmoured Wall: 15" + "\nWood Door: 1" + "\nSheet Door: 2" + "\nGarage Door: 3" + "\nArmoured Door: 4" + "\nLadder Hatch: 2" +
             "\nWood High Ex: 3" + "\nStone High Ex: 4",
             color=discord.Color.dark_orange()
         )
 
         rocket_chart.set_thumbnail(url="https://static.wikia.nocookie.net/play-rust/images/9/95/Rocket_icon.png/revision/latest/top-crop/width/360/height/360?cb=20151106061039")
         await ctx.send(embed=rocket_chart)
-    elif type == 'Satchel':
+    elif type == 'Satchel' or type == "Satchels" or type == "satchel" or type == "satchels":
         satchel_chart = discord.Embed(
             title="Satchel Chart",
-            description="\nWood Wall: 3" + "\nStone Wall: 10" + "\nSheet Wall: 23" + "\n Armoured Wall: 46" + "\nWood Door: 2" + "\nSheet Door: 4" + "\nGarage Door: 9" + "\nArmoured Door: 12" + "\nLadder Hatch: 4" +
+            description="\nWood Wall: 3" + "\nStone Wall: 10" + "\nSheet Wall: 23" + "\nArmoured Wall: 46" + "\nWood Door: 2" + "\nSheet Door: 4" + "\nGarage Door: 9" + "\nArmoured Door: 12" + "\nLadder Hatch: 4" +
             "\nWood High Ex: 6" + "\nStone High Ex: 10",
             color=discord.Color.dark_orange()
         )
 
         satchel_chart.set_thumbnail(url="https://community.cloudflare.steamstatic.com/economy/image/6TMcQ7eX6E0EZl2byXi7vaVKyDk_zQLX05x6eLCFM9neAckxGDf7qU2e2gu64OnAeQ7835Fc5WLCfDY0jhyo8DEiv5ddOKA9pbAzRP66Mz-oL1M/360fx360f")
         await ctx.send(embed=satchel_chart)
-    elif type == 'Stone Pickaxe':
-        stonepick_chart = discord.Embed(
-            title="Satchel Chart",
-            description="\nWood Wall: 3" + "\nStone Wall: 10" + "\nSheet Wall: 23" + "\n Armoured Wall: 46" + "\nWood Door: 2" + "\nSheet Door: 4" + "\nGarage Door: 9" + "\nArmoured Door: 12" + "\nLadder Hatch: 4" +
-                        "\nWood High Ex: 6" + "\nStone High Ex: 10",
+    elif type == 'Expo' or 'expo':
+        expo_chart = discord.Embed(
+            title="Expo Chart",
+            description="\nWood Wall: 49" + "\nStone Wall: 209" + "\nSheet Wall: 417" + "\nArmoured Wall: 834" + "\nWood Door: 18" + "\nSheet Door: 63" + "\nGarage Door: 152" + "\nArmoured Door: 200" + "\nLadder Hatch: 63" +
+            "\nWood High Ex: 6" + "\nStone High Ex: 10",
             color=discord.Color.dark_orange()
         )
 
-        stonepick_chart.set_thumbnail(url="https://community.cloudflare.steamstatic.com/economy/image/6TMcQ7eX6E0EZl2byXi7vaVKyDk_zQLX05x6eLCFM9neAckxGDf7qU2e2gu64OnAeQ7835Fc5WLCfDY0jhyo8DEiv5ddOKA9pbAzRP66Mz-oL1M/360fx360f")
-        await ctx.send(embed=stonepick_chart)
-
-
-@bot.command()
-async def wipereminder(ctx, t:int, servername: str):
-    while t:
-        mins, secs = divmod(t, 60)
-        timer = '{:02d}:{:02d}'.format(mins, secs)
-        print(timer, end="\r")
-        time.sleep(1)
-        t -= 1
-
-    if t == 0:
-        wipe_embed = discord.Embed(
-            title="Wipe Alert",
-            description="@everyone " + servername + " has just wiped" ,
-            color=discord.Color.dark_orange()
-        )
-        wipe_embed.set_thumbnail(url="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/46b63d3c-ae67-464c-9a37-670829b2a157/da3m1p2-984b8628-aef9-46ec-9a2f-67c63c174031.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOiIsImlzcyI6InVybjphcHA6Iiwib2JqIjpbW3sicGF0aCI6IlwvZlwvNDZiNjNkM2MtYWU2Ny00NjRjLTlhMzctNjcwODI5YjJhMTU3XC9kYTNtMXAyLTk4NGI4NjI4LWFlZjktNDZlYy05YTJmLTY3YzYzYzE3NDAzMS5wbmcifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6ZmlsZS5kb3dubG9hZCJdfQ.CoXXDV-5gqNkHM-IO5_sMNgz_l4lhK2dohdUFTl5rZI")
-        await ctx.send(embed=wipe_embed)
-
+        expo_chart.set_thumbnail(url="https://static.wikia.nocookie.net/play-rust/images/3/31/Explosive_5.56_Rifle_Ammo_icon.png/revision/latest/scale-to-width-down/256?cb=20151106061449")
+        await ctx.send(embed=expo_chart)
 
 bot.run("your token here")
